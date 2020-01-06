@@ -22,6 +22,7 @@
 //MQTT topics
 #define TOPIC_BASE "ESP/BedScale"
 #define TOPIC_MASS TOPIC_BASE "/mass"
+#define TOPIC_MASS_RAW TOPIC_BASE "/massraw"
 #define TOPIC_CMD  TOPIC_BASE "/cmd"
 #define TOPIC_AVAIL TOPIC_BASE "/available"
 
@@ -226,6 +227,7 @@ void loop() {
 	static uint32_t avail_timer = 0;
 	static uint8_t samples = 0;
 	static float avg = 0;
+	static float rawavg = 0;
 	static float oldAvg = 0;
 
 	if(!digitalRead(tareButton))
@@ -246,6 +248,7 @@ void loop() {
 		{
 			//Create buffer
 			char result[RESULT_WIDTH + 1];
+			char resultraw[RESULT_WIDTH + 1];
 
 			//Average results
 			avg /= samples;
@@ -253,15 +256,18 @@ void loop() {
 			//Transmit only if changed
 			if(abs(avg - oldAvg) > PRECISION)
 			{
+				rawavg = avg;
 				if(avg <= 0.5)
 				{
 					avg = 0;
 				}
 				//COnvert float to string
 				dtostrf(avg, RESULT_WIDTH, RESOLUTION, result);
+				dtostrf(rawavg,RESULT_WIDTH, RESOLUTION, resultraw);
 
 				//Serial.println(result);
 				client.publish(TOPIC_MASS, result);
+				client.publish(TOPIC_MASS_RAW, resultraw);
 				digitalWrite(mqttPostLED, HIGH);
 				delay(100);
 				digitalWrite(mqttPostLED, LOW);

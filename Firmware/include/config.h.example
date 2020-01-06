@@ -1,0 +1,7 @@
+#define WIFI_SSID "Foo"
+#define WIFI_PASSWORD "Bar" 
+
+#define MQTT_SERVER_IP "192.168.1.X"
+#define MQTT_CLIENT_ID "ESP-BedScale"
+#define MQTT_USER "User"
+#define MQTT_PASSWORD "Pass"
